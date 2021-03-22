@@ -1,0 +1,8 @@
+port: 3000
+db:
+    mongodb:
+        -   enabled: true
+            host: localhost
+            port: 27017
+            database: user-manager
+            nameconn: connMongo
