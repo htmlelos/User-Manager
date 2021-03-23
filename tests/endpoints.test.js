@@ -1,6 +1,15 @@
 const request = require('supertest')
 const server = require('../server')
 
+describe('GET /pong', () => {
+    it('deberia devolver pong', async () => {
+        const res = await request(server)
+            .get('/api/v1/ping')
+        expect(res.statusCode).toEqual(200)
+        expect(res.body.message).toEqual('pong')
+    })
+})
+
 describe('POST /user', () => {
     it('deberia crear un nuevo usuario', async () => {
         const res = await request(server)

@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 
-console.log('DATABASE_URI' + process.env.DATABASE_URI)
-
-mongoose.connect(process.env.DATABASE_URI)
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
 const database = mongoose.connection
 
 database.on('connect', error => {

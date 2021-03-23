@@ -1,0 +1,60 @@
+const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+let SALT_WORK_FACTOR = 12
+
+const UserSchema = new Schema({
+    username: {
+        type: String,
+        required: true,
+        index: true
+    },
+    firstname: {
+        type: String,
+        required: true,
+        index: true
+    },
+    lastname: {
+        type: String,
+        required: true,
+        idenx: true
+    },
+    dni: {
+        type: String,
+        match: /[0-9]{8}/,
+        index: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    childs: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    roles: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Roles'
+    }]
+},{
+    versionKey: false    
+})
+
+UserSchema.statics.encryptPassword = async (password) => {
+    // Para acelerar los test, verificamos NODE_ENV
+    // demodo que si estamos realizando test, establecemos SALT_WORK_FACTOR = 1
+    // para disminuir el costo de la encripcion del password    
+    if (process.env.NODE_ENV === 'test') {
+        SALT_WORK_FACTOR = 1;
+    }
+    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
+    return await bcrypt.hash(password, salt)
+}
+
+UserSchema.statics.comparePasswordAndHash = async (password, newPassword) => {
+    // Compara las contraseñas proporcionadas
+    return await bcrypt.compare(password, newPassword)
+}
+
+module.exports = mongoose.model('User', UserSchema)
