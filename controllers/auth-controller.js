@@ -1,7 +1,8 @@
+const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const Role = require('../models/Role')
 
-const jwt = require('jsonwebtoken')
+const EXPIRATION_TIME = 28800   // Numero de segundos en ocho horas
 
 const signup = async (req, res) => {
     try {
@@ -16,7 +17,7 @@ const signup = async (req, res) => {
             const foundRoles = await Role.find({ name: { $in: roles } })
             newUser.roles = foundRoles.map((role) => role._id)
         } else {
-            const role = await Role.findOne({ name: "user" })
+            const role = await Role.findOne({ name: "padre" })
             newUser.roles = [role._id]
         }
         // Registrar el usuario en la base de datos
@@ -24,7 +25,7 @@ const signup = async (req, res) => {
 
         // Crear token 
         const token = jwt.sign({ id: registeredUser._id }, process.env.SECRET, {
-            expiresIn: 28800, // 8 horas
+            expiresIn: EXPIRATION_TIME, // 8 horas
         })
 
         return res.status(200).json({ token })
@@ -50,9 +51,9 @@ const signin = async (req, res) => {
             })
         }
 
-        const token = jwt.sign({ id: userFound._id }, process.env.SECRET, { expiresIn: 28800, })
+        const token = jwt.sign({ id: userFound._id }, process.env.SECRET, { expiresIn: EXPIRATION_TIME, })
 
-        res.json({ token })
+        res.json({token})
     } catch (error) {
         //logger        
         res.json({error, message: '?'})

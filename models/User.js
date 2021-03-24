@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const uniqueValidator = require('mongoose-unique-validator')
 
 let SALT_WORK_FACTOR = 12
 
@@ -41,6 +42,8 @@ const UserSchema = new Schema({
 },{
     versionKey: false    
 })
+
+UserSchema.plugin(uniqueValidator, {message: 'Ya existe un {PATH} con el valor indicado'})
 
 UserSchema.statics.encryptPassword = async (password) => {
     // Para acelerar los test, verificamos NODE_ENV
