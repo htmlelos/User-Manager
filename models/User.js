@@ -8,17 +8,18 @@ const UserSchema = new Schema({
     username: {
         type: String,
         required: true,
-        index: true
+        index: true,
+        unique: true
     },
     firstname: {
         type: String,
-        required: true,
+        // required: true,
         index: true
     },
     lastname: {
         type: String,
-        required: true,
-        idenx: true
+        // required: true,
+        index: true
     },
     dni: {
         type: String,
@@ -35,7 +36,7 @@ const UserSchema = new Schema({
     }],
     roles: [{
         type: Schema.Types.ObjectId,
-        ref: 'Roles'
+        ref: 'Role'
     }]
 },{
     versionKey: false    

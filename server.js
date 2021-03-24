@@ -3,6 +3,11 @@ const express = require('express')
 const server = express()
 const mongoose = require('./services/database/mongoose-connection')
 const morgan = require('morgan')
+const startup = require('./utils/startup')
+
+// Inicializar
+startup.createRoles()
+startup.createAdmin()
 
 // Configuración
 
@@ -22,6 +27,7 @@ server.get('/api/v1/ping', async (req, res) => {
 })
 
 server.use('/api/v1/', require('./routes/user-routes'))
+server.use('/api/v1/', require('./routes/auth-routes'))
 
 // Servidor
 
