@@ -1,7 +1,7 @@
 const { Router} = require('express');
 const router = Router()
 const user = require('../controllers/user-controller')
-const {verifyToken, isParent} = require('../middleware/authwt')
+const {verifyToken, isParent} = require('../middleware/auth-jwt')
 
 router.route('/users')
         .get(verifyToken, user.getAllUsers)

@@ -8,9 +8,7 @@ const startup = require('./utils/startup')
 // Inicializar
 startup.createRoles()
 startup.createAdmin()
-
 // Configuración
-
 const port = process.env.PORT || 3000
 
 if (process.env.NODE_ENV == 'test') {
@@ -19,18 +17,14 @@ if (process.env.NODE_ENV == 'test') {
 
 server.use(express.urlencoded({ extended: true }))
 server.use(express.json())
-
 // Rutas
-
 server.get('/api/v1/ping', async (req, res) => {
     await res.json({ message: 'pong' }).status(200)
 })
 
 server.use('/api/v1/', require('./routes/user-routes'))
 server.use('/api/v1/', require('./routes/auth-routes'))
-
 // Servidor
-
 server.listen(port, () => {
     console.log(`El servidor esta ejecutandose en el puerto ${port}`)
 })
