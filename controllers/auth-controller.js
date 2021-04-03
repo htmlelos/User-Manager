@@ -1,10 +1,10 @@
-const jwt = require('jsonwebtoken')
-const User = require('../models/User')
-const Role = require('../models/Role')
+import jwt from 'jsonwebtoken'
+import User from '../models/User.js'
+import Role from '../models/Role.js'
 
 const EXPIRATION_TIME = 28800   // Numero de segundos en ocho horas
 
-const signup = async (req, res) => {
+export const signup = async (req, res) => {
     try {
         const { username, password, roles } = req.body
 
@@ -35,7 +35,7 @@ const signup = async (req, res) => {
     }
 }
 
-const signin = async (req, res) => {
+export const signin = async (req, res) => {
     try {
         const userFound = await User.findOne({ username: req.body.username })
             .populate({path: 'roles'})
@@ -58,9 +58,4 @@ const signin = async (req, res) => {
         //logger        
         res.json({error, message: '?'})
     }
-}
-
-module.exports = {
-    signup,
-    signin
 }

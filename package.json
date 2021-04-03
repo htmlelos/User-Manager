@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "administracion de usuarios",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "dev": "SET NODE_ENV=dev&& npx nodemon server.js",
     "start": "node server.js",

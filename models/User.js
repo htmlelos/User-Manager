@@ -1,7 +1,7 @@
-const bcrypt = require('bcrypt')
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-const uniqueValidator = require('mongoose-unique-validator')
+import bcrypt from 'bcrypt'
+import mongoose from 'mongoose'
+const {Schema, model} = mongoose
+import uniqueValidator from 'mongoose-unique-validator'
 
 let SALT_WORK_FACTOR = 12
 
@@ -61,4 +61,4 @@ UserSchema.statics.comparePasswordAndHash = async (password, newPassword) => {
     return await bcrypt.compare(password, newPassword)
 }
 
-module.exports = mongoose.model('User', UserSchema)
+export default model('User', UserSchema)

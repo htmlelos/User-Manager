@@ -1,18 +1,33 @@
-const User = require('../models/User')
-const Role = require('../models/Role')
+import User from '../models/User.js'
+import Role from '../models/Role.js'
 
-const LIMIT_SIZE = 2
+const LIMIT_SIZE = 10
 
-const getAllUsers = async (req, res) => {
+
+
+export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find({})
+            .populate({
+                path: 'childs',
+                options: {
+                    sort: { firstname: 1 },
+                    select: '-password'
+                }
+            })
+            .populate({
+                path: 'roles',
+                options: {
+                    select: 'name'
+                }
+            })
         res.status(200).json(users)
     } catch (err) {
         res.status(400).json(err)
     }
 }
 
-const createUser = async (req, res) => {
+export const createUser = async (req, res) => {
     try {
         const { username, firstname, lastname, dni, password, roles } = req.body
         const newUser = new User({
@@ -30,20 +45,21 @@ const createUser = async (req, res) => {
     }
 }
 
-const getUser = async (req, res) => {
+
+export const getUser = async (req, res) => {
     try {
         const userFound = await User.findById(req.params.userId)
-                            .select('-password')
+            .select('-password')
         res.status(200).json(userFound)
     } catch (err) {
         res.status(400).json(err)
     }
 }
 
-const updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
     try {
-        const {firstname, lastname, dni} = req.body
-        const updatedUser = await User.findByIdAndUpdate(req.params.userId, {firstname, lastname, dni}, { new: true })
+        const { firstname, lastname, dni } = req.body
+        const updatedUser = await User.findByIdAndUpdate(req.params.userId, { firstname, lastname, dni }, { new: true })
         res.status(204).json(updatedUser)
     } catch (err) {
         // logger
@@ -51,20 +67,20 @@ const updateUser = async (req, res) => {
     }
 }
 
-const getChildsUser = async (req, res) => {
+export const getChildsUser = async (req, res) => {
     try {
         const page = req.query.page
         if (page < 0) {
-            res.status(400).json({message: 'El numero de paginas no puede ser negativo'})
+            res.status(400).json({ message: 'El numero de paginas no puede ser negativo' })
             return
-        } 
+        }
         const userFound = await User.findById(req.params.userId)
             .populate({
                 path: 'childs',
                 options: {
                     limit: LIMIT_SIZE,
                     skip: LIMIT_SIZE * page,
-                    sort: {firstname: 1},
+                    sort: { firstname: 1 },
                     select: '-password'
                 }
             }
@@ -77,21 +93,20 @@ const getChildsUser = async (req, res) => {
     }
 }
 
-const addChildUser = async (req, res) => {
-
+export const addChildUser = async (req, res) => {
     try {
         const userFound = await User.findById(req.params.userId)
         if (userFound) {
             const { username, firstname, lastname, dni, password, roles } = req.body
-            const roleFound = await Role.find({name: 'hijo'})            
+            const roleFound = await Role.find({ name: 'hijo' })
             const child = new User({
                 username,
                 firstname,
                 lastname,
                 dni,
-                password: await User.encryptPassword(password), 
+                password: await User.encryptPassword(password),
             })
-            for(i = 0; i < roleFound.length; i++) {
+            for (i = 0; i < roleFound.length; i++) {
                 child.roles.push(roleFound[i]._id)
             }
             await child.save()
@@ -107,7 +122,7 @@ const addChildUser = async (req, res) => {
     }
 }
 
-const updateChildUser = async (req, res) => {
+export const updateChildUser = async (req, res) => {
     try {
         const userFound = await User.findById(req.params.userId)
         if (userFound) {
@@ -123,14 +138,4 @@ const updateChildUser = async (req, res) => {
     } catch (err) {
         res.status(400).json(err)
     }
-}
-
-module.exports = {
-    getAllUsers,
-    createUser,
-    getUser,
-    updateUser,
-    getChildsUser,
-    addChildUser,
-    updateChildUser
 }

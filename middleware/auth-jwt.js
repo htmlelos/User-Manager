@@ -1,11 +1,12 @@
-const jwt = require('jsonwebtoken')
-const User = require('../models/User')
-const Role = require('../models/Role')
+import jwt from 'jsonwebtoken'
+import User from '../models/User.js'
+import Role from '../models/Role.js'
 
-const verifyToken = async (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
     try {
         const token = req.headers['x-access-token']
-    
+        console.log('token', token)
+
         if (!token) return res.status(403).json({message:'Las credenciales de autenticación no son válidas'})
     
         const decoded = jwt.verify(token, process.env.SECRET)
@@ -19,7 +20,7 @@ const verifyToken = async (req, res, next) => {
     }
 }
 
-const isParent = async (req, res, next) => {
+export const isParent = async (req, res, next) => {
     const userFound = await User.findById(req.userId)
     const roles = await Role.find({_id: {$in: userFound.roles}})
     for (let i = 0; i < roles.length; i++) {
@@ -32,7 +33,7 @@ const isParent = async (req, res, next) => {
     return res.status(403).json({message: 'No posee los privilegios suficientes para realizar la operación'})
 }
 
-const isAdmin = async (req, res, next) => {
+export const isAdmin = async (req, res, next) => {
     const userFound = await User.findById(req.userId)
     const roles = await Role.find({_id: {$in: userFound.roles}})
     for (let i = 0; i < roles.length; i++) {
@@ -43,10 +44,4 @@ const isAdmin = async (req, res, next) => {
     }
     
     return res.status(403).json({message: 'No posee los privilegios suficientes para realizar la operación'})
-}
-
-module.exports = {
-    verifyToken,
-    isParent,
-    isAdmin
 }

@@ -1,17 +1,18 @@
-const { Router} = require('express');
-const router = Router()
-const user = require('../controllers/user-controller')
-const {verifyToken, isParent} = require('../middleware/auth-jwt')
+import express from 'express'
+const router = express.Router()
+import {getAllUsers, createUser, getUser, updateUser, updateChildUser, getChildsUser, addChildUser} from '../controllers/user-controller.js'
+import { verifyToken, isParent, isAdmin } from '../middleware/auth-jwt.js'
 
 router.route('/users')
-        .get(verifyToken, user.getAllUsers)
-        .post(verifyToken, user.createUser)
+        .get([verifyToken, isAdmin], getAllUsers)
+        .post(verifyToken, createUser)
 router.route('/users/:userId')
-        .get(verifyToken, user.getUser)
-        .put(verifyToken, user.updateUser)
+        .get(verifyToken, getUser)
+        .put(verifyToken, updateUser)
 router.route('/users/:userId/childs/:childId')
-        .put([verifyToken, isParent], user.updateChildUser)
+        .put([verifyToken, isParent], updateChildUser)
 router.route('/users/:userId/childs')
-        .get([verifyToken, isParent], user.getChildsUser)
-        .post([verifyToken, isParent], user.addChildUser)
-module.exports = router;
+        .get([verifyToken, isParent], getChildsUser)
+        .post([verifyToken, isParent], addChildUser)
+
+export default router;
